@@ -2,6 +2,15 @@ from bpy.props import StringProperty
 from random import randint
 import bpy
 
+bl_info = {
+    'name': 'Split Frame from Text Strip',
+    'author': 'gabriel montagné, gabriel@tibas.london',
+    'version': (0, 0, 1),
+    'blender': (2, 80, 0),
+    'description': 'Split a node editor frame from the contents of a text file',
+    'tracker_url': 'https://github.com/gabrielmontagne/blender-addon-clone-frame-from-text/issues'
+}
+
 MARGIN = 15
 
 class NODES_OP_split_frame(bpy.types.Operator):
