@@ -1,37 +1,49 @@
-import bpy
+from bpy.props import StringProperty
 from random import randint
+import bpy
+
+MARGIN = 15
 
 class NODES_OP_clone_frame(bpy.types.Operator):
     """Clone frame from text"""
     bl_idname = "node.clone_frame_from_text"
     bl_label = "Clone frame from text"
 
+    from_file: StringProperty(name='File')
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop_search(self, "from_file", bpy.data, 'texts')
+
     @classmethod
     def poll(cls, context):
         return context.area.type == 'NODE_EDITOR' and context.active_node and context.active_node.type == 'FRAME'
 
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
     def execute(self, context):
-        print('execute!')
-        print(context.area.type)
-        print(context.area)
-        print(context.active_node)
-        print(dir(context.active_node))
         active_node = context.active_node
         w, h = active_node.dimensions
-        bpy.ops.node.duplicate()
-        bpy.ops.node.translate_attach(TRANSFORM_OT_translate={'value': (0, -h - 10, 0)})
-        context.active_node.label = str(randint(0, 20))
+
+        lines = [l.body.strip() for l in bpy.data.texts[self.from_file].lines if l.body.strip()]
+        assert len(lines), 'Should have at least one line'
+
+        active_node.label= lines[0]
+
+        for line in lines[1:]:
+            bpy.ops.node.duplicate()
+            bpy.ops.node.translate_attach(TRANSFORM_OT_translate={'value': (0, -(h + MARGIN), 0)})
+            context.active_node.label = line
+
         return {'FINISHED'}
 
 def register():
-    print('reg')
     bpy.utils.register_class(NODES_OP_clone_frame)
 
 def unregister():
-    print('unreg')
     bpy.utils.unregister_class(NODES_OP_clone_frame)
 
 if __name__ == "__main__":
     register()
-
-
