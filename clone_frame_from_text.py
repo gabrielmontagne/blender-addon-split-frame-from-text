@@ -16,10 +16,11 @@ class NODES_OP_clone_frame(bpy.types.Operator):
         print(context.area)
         print(context.active_node)
         print(dir(context.active_node))
+        active_node = context.active_node
+        w, h = active_node.dimensions
         bpy.ops.node.duplicate()
-        bpy.ops.node.translate_attach(TRANSFORM_OT_translate={'value': (100, -100, 0)})
+        bpy.ops.node.translate_attach(TRANSFORM_OT_translate={'value': (0, -h - 10, 0)})
         context.active_node.label = str(randint(0, 20))
-        print('after', a)
         return {'FINISHED'}
 
 def register():
