@@ -4,10 +4,10 @@ import bpy
 
 MARGIN = 15
 
-class NODES_OP_clone_frame(bpy.types.Operator):
-    """Clone frame from text"""
-    bl_idname = "node.clone_frame_from_text"
-    bl_label = "Clone frame from text"
+class NODES_OP_split_frame(bpy.types.Operator):
+    """Split frame from text"""
+    bl_idname = "node.split_frame_from_text"
+    bl_label = "Split Frame From Text"
 
     from_file: StringProperty(name='File')
 
@@ -40,10 +40,10 @@ class NODES_OP_clone_frame(bpy.types.Operator):
         return {'FINISHED'}
 
 def register():
-    bpy.utils.register_class(NODES_OP_clone_frame)
+    bpy.utils.register_class(NODES_OP_split_frame)
 
 def unregister():
-    bpy.utils.unregister_class(NODES_OP_clone_frame)
+    bpy.utils.unregister_class(NODES_OP_split_frame)
 
 if __name__ == "__main__":
     register()

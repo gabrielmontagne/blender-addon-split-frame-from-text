@@ -1,0 +1,5 @@
+= Split frame from text
+
+In a node editor will clone and rename a selected frame node once for each line in a text file.
+
+image::preview.png[Preview]
