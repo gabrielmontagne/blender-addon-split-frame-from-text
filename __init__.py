@@ -1,6 +1,7 @@
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 from random import randint
 import bpy
+import re
 
 bl_info = {
     'name': 'Split Frame from Text Strip',
@@ -19,9 +20,11 @@ class NODES_OP_split_frame(bpy.types.Operator):
     bl_label = "Split Frame From Text"
 
     from_file: StringProperty(name='File')
+    split_on_empty_lines: BoolProperty(name='Split on empty lines')
 
     def draw(self, context):
         layout = self.layout
+        layout.prop(self, 'split_on_empty_lines')
         layout.prop_search(self, "from_file", bpy.data, 'texts')
 
     @classmethod
@@ -36,7 +39,17 @@ class NODES_OP_split_frame(bpy.types.Operator):
         active_node = context.active_node
         w, h = active_node.dimensions
 
-        lines = [l.body.strip() for l in bpy.data.texts[self.from_file].lines if l.body.strip()]
+        text = self.from_file
+
+        if self.split_on_empty_lines:
+            lines = [
+                l.strip()
+                for l in re.split(r'\n{2,}', bpy.data.texts[text].as_string()) if l.strip()
+            ]
+        else:
+            text = self.from_file
+            lines = [l.body.strip() for l in bpy.data.texts[text].lines if l.body.strip()]
+
         assert len(lines), 'Should have at least one line'
 
         active_node.label= lines[0]
@@ -44,7 +57,7 @@ class NODES_OP_split_frame(bpy.types.Operator):
         for line in lines[1:]:
             bpy.ops.node.duplicate()
             bpy.ops.node.translate_attach(TRANSFORM_OT_translate={'value': (0, -(h + MARGIN), 0)})
-            context.active_node.label = line
+            context.active_node.label = line.split('\n')[0]
 
         return {'FINISHED'}
 
